@@ -1,0 +1,54 @@
+:root {
+    --color-caution: #B80C09;
+    --color-primary: #1B1A31;
+    --color-neutral: #1FA9DC;
+    --color-highlight: #ffee00;
+    --color-foreground: #040F16;
+    --color-background: #FBFBFF;
+    --color-border: #959595;
+    --radius-large: 40px;
+    --radius-small: 10px;
+    --shadow: 0 10px 30px 3px rgba(0, 0, 0, 0.1);
+    --shadow-small: 0 0 5px rgba(117, 117, 117, 0.5);
+    --space-default: 20px;
+    --font-copy: 'DM Serif Text', serif;
+    --font-heading: 'Montserrat', sans-serif;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    color: var(--color-foreground);
+    font-family: var(--font-copy);
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.waves {
+    position: absolute;
+    bottom: 0;
+    height: 100px;
+    width: 100%;
+    transform: rotateY(180deg);
+    min-width: 1200px;
+}
+
+p {
+    line-height: 1.6;
+}
+
+@media (max-width: 1199px) {
+    :root {
+        --space-default: 10px;
+    }
+
+    .wave-wrapper {
+        display: none;
+    }
+
+    nextjs-portal {
+        display: none;
+    }
+}

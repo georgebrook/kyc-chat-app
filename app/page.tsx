@@ -1,95 +1,118 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useRouter } from 'next/navigation';
+import Button from "@molecules/Button";
+import Heading from "@atoms/Heading";
+import QRCodeLocalhost from "@/components/QRCodeLocalhost";
+import { bem } from '@/lib/bem';
+import Waves from '@/components/atoms/Waves';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+  const blockName = 'page'
+
+  return (
+    <div className={bem(blockName)}>
+      <div className='page__intro'>
+        <div className={bem(blockName, 'left')}>
+          <QRCodeLocalhost />
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className={bem(blockName, 'right')}>
+          <Heading level={1}>
+            Message your phone from your computer
+          </Heading>
+          <p>Scan the QR code on the left with your phone to start chatting from your phone, then click the button below to continue the conversation on desktop.</p>
+          <Button iconName="chat" iconSize={25} onClick={() => router.push('/desktop')}>Chat from desktop</Button>
+          <p>OR, open the mobile view in a new window and chat there:</p>
+          <Button iconName="mobile" iconSize={20} onClick={() => router.push('/mobile')}>Mobile page</Button>
+        </div>
+
+        <div className='page__mobile'>
+          <p>Please view this on a laptop or desktop</p>
+        </div>
+      </div>
+
+      <Waves color="#ffffff" />
+
+
+      <style jsx>{`
+        .page {
+          background-color: var(--color--neutral);
+          background: linear-gradient(353deg, #1fa9DCD9 0, #c3e8F6EB 59%);
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          width: 100%;
+          height: 100%;
+          overflow-x: hidden;
+        }
+
+        .page__intro {
+          background-color: var(--color-background);
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 16px;
+          box-shadow: var(--shadow);
+          backdrop-filter: blur(11.6px);
+          -webkit-backdrop-filter: blur(11.6px);
+          display: flex;
+          justify-content: center;
+          border-radius: var(--radius-large);
+          align-items: center;
+          width: 900px;
+          padding:var(--space-default) 70px;
+          gap:var(--space-default);
+          position: absolute;
+          top: 50%;
+          overflow: hidden;
+          left: 50%;
+          transform: translate(-50%, -70%);
+        }
+
+        .page__left {
+          width: 50%;
+          display: flex;
+          border-right: 1px solid var(--color-border);
+          margin-right: 40px;
+          height: 80%;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .page__right {
+          width: 50%;
+          padding: 50px 0;
+        }
+
+        .page__mobile {
+          display: none;
+        }
+
+        @media (max-width: 1199px) {
+          .page__left,
+          .page__right {
+            display: none;
+          }
+
+          .page {
+            background: var(--background);
+          }
+
+          .page__mobile {
+            display: block;
+          }
+
+          .page__intro {
+            width: 100%;
+            height: 100%;
+            background: none;
+            box-shadow: none;
+            border-radius: 0;
+            transform: none;
+            position: static;
+            padding: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }

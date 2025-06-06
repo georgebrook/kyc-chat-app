@@ -1,36 +1,158 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Project Documentation
 
-First, run the development server:
+## Overview
+
+This is a real-time messaging app built with Next.js and Firebase Realtime Database. It supports both desktop and mobile clients, allowing users to send and receive messages instantly.
+
+The app uses an atomic design system with components organized as atoms, molecules, and organisms for modularity and ease of development.
+
+## Architecture & Design
+
+- **Framework:** Next.js with Turbopack
+- **Component Structure:** Atomic Design (atoms, molecules, organisms)
+- **Styling:** CSS Modules with BEM utility function (see below)
+- **Fonts:** Dai Banna SIL (body), Montserrat (headings) via `next/font/google`
+- **Realtime Backend:** Firebase Realtime Database
+- **Development:** Runs locally on machine’s LAN IP with QR code for mobile access
+
+## Development Setup
+Install the node modules
+
+```bash
+npm inmstall
+```
+
+The development environment runs multiple processes concurrently for ease of development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This command runs:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- SVG sprite generation
+- Next.js development server with Turbopack (next dev --turbopack)
+- Storybook for component development and documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Once up and running you can scan the QR code with your phone that appears and start chatting right away!**
 
-## Learn More
+Visit:
+- The main app at: http://localhost:3000/
+- The Storybook instance at: http://localhost:6006/?path=/docs/atoms-errortext--docs
 
-To learn more about Next.js, take a look at the following resources:
+## Mobile Testing on Local Network
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A custom Node.js script serves the app on your local IP and prints a QR code so you can easily open the app on your phone:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```js
+const os = require('os');
+const { spawn } = require('child_process');
+const qrcode = require('qrcode-terminal');
 
-## Deploy on Vercel
+function getLocalIp() {
+  const interfaces = os.networkInterfaces();
+  for (const ifaceList of Object.values(interfaces)) {
+    for (const iface of ifaceList) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+const ip = getLocalIp();
+const port = 3000;
+const url = `http://${ip}:${port}`;
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+console.log(`\n📱 Scan this QR code or open on your phone:\n`);
+qrcode.generate(url, { small: true });
+console.log(`\n🔗 ${url}\n`);
+
+const dev = spawn('npx', ['next', 'dev', '-H', '0.0.0.0', '-p', port], {
+  stdio: 'inherit',
+});
+```
+
+## BEM Utility Function
+
+For consistent CSS class naming, the following utility function is used:
+
+```ts
+type Modifiers = string[] | undefined;
+type ExtraClasses = string | string[] | undefined;
+
+export function bem(
+  block: string,
+  element?: string | null,
+  modifiers?: Modifiers,
+  extra?: ExtraClasses
+): string {
+  const base = element ? `${block}__${element}` : block;
+  const modClasses = modifiers?.map(mod => `${base}--${mod}`) || [];
+
+  const extraClasses = Array.isArray(extra)
+    ? extra
+    : extra
+    ? [extra]
+    : [];
+
+  return [base, ...modClasses, ...extraClasses].join(' ');
+}
+```
+
+## Layout Component (layout.tsx)
+
+Defines global styles, fonts, and metadata:
+
+```tsx
+import './globals.css';
+import './theme.css';
+import { Dai_Banna_SIL, Montserrat } from 'next/font/google';
+
+const dmSerifText = Dai_Banna_SIL({
+  weight: '300',
+  subsets: ['latin'],
+  variable: '--font-body',
+});
+
+const montserrat = Montserrat({
+  weight: ['100','200','300','400','500','600','700','800','900'],
+  subsets: ['latin'],
+  variable: '--font-heading',
+});
+
+export const metadata = {
+  title: 'Message your phone',
+  description: 'Message your phone',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html className={`${dmSerifText.variable} ${montserrat.variable}`} lang="en">
+      <head>
+        <meta name="theme-color" content="#ffffff" />
+      </head>
+      <body>
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+## Project Summary & Brief
+
+The project provides two main clients:
+
+- Desktop client: Allows users to send and receive messages in real-time.
+- Mobile client: Allows users to send and receive messages in real-time.
+
+Messages are stored and synchronized via Firebase Realtime Database. The UI is designed to be user-friendly and responsive for both device types.
+
+## Supporting Documentation
+
+- Storybook is used for developing and documenting UI components.
+- Firebase credentials are stored securely in .env.local (not committed to source control).
+- Presentation materials and further documentation will be included in the final deliverable.
